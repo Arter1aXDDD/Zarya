@@ -913,6 +913,19 @@ html {
             }
 
             @media (max-width: 900px) {
+                .hero::before {
+                    background-position: 62% center;
+                    filter: none;
+                    transform: none;
+                }
+
+                .hero-content > * {
+                    opacity: 1;
+                    transform: none;
+                    animation: none;
+                    will-change: auto;
+                }
+
                 .site-header .container,
                 .nav,
                 .news-grid,
@@ -1102,6 +1115,10 @@ html {
 
                 .hero {
                     min-height: 410px;
+                }
+
+                .hero::before {
+                    background-position: 68% center;
                 }
 
                 .hero h1,
