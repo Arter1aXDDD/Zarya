@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты — Заря</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/common.js"></script>
+    <script src="../js/forms.js"></script>
+    <script src="../js/contacts.js"></script>
+    <link rel="stylesheet" href="../css/contacts.css">
+    <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a class="brand" href="index.html" aria-label="Заря">
+                <img src="../img/logo.png" alt="Логотип Заря">
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav" aria-label="Основная навигация">
+                <a href="index.html" data-nav="home">Главная</a>
+                <a href="company.html" data-nav="company">О компании</a>
+                <a href="catalog.html" data-nav="catalog">Каталог</a>
+                <a href="news.html" data-nav="news">Новости</a>
+                <a href="contacts.html" data-nav="contacts">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="contacts-top">
+            <div class="container">
+                <div class="section-head">
+                    <h1>Контакты</h1>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <div class="label">Телефон</div>
+                        <div class="value"><a href="tel:+78442551506">+7 844 255-15-06</a></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="label">E-mail</div>
+                        <div class="value"><a href="mailto:zaryaofficial2014@mail.ru">zaryaofficial2014@mail.ru</a></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="label">Адрес</div>
+                        <div class="value">г. Волгоград, ул. Бурейская, 7</div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="label">Режим работы</div>
+                        <div class="value">пн-вс 10:00 - 22:00</div>
+                    </div>
+                </div>
+
+                <div class="map-wide" aria-label="Карта">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2632.5112711301435!2d44.48382937680367!3d48.71482161079874!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x411acb6a5ed0d9c9%3A0x9502d08da633725f!2z0JHRg9GA0LXQudGB0LrQsNGPINGD0LsuLCA3LCDQktC-0LvQs9C-0LPRgNCw0LQsINCS0L7Qu9Cz0L7Qs9GA0LDQtNGB0LrQsNGPINC-0LHQuy4sINCg0L7RgdGB0LjRjywgNDAwMDgx!5e0!3m2!1sru!2snl!4v1776016902852!5m2!1sru!2snl" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section class="contacts-bottom">
+            <div class="container">
+                <div class="bottom-grid">
+                    <div>
+                        <div class="section-head">
+                            <h2>Форма обратной связи</h2>
+                        </div>
+                        <div class="form-card-wrap">
+                            <img class="form-decor" src="../img/decoralwheat.png" alt="">
+                            <div class="form-card">
+                                <form id="contacts-feedback-form">
+                                    <input type="hidden" name="source_page" value="contacts">
+                                    <input type="text" name="name" placeholder="Ваше имя">
+                                    <input type="tel" name="phone" placeholder="Номер телефона">
+                                    <input type="email" name="email" placeholder="Email">
+                                    <textarea name="message" placeholder="Ваше сообщение"></textarea>
+                                    <button type="submit">Отправить</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="map-small">
+                        <div class="section-head">
+                            <h2>Как нас найти</h2>
+                        </div>
+                        <div class="route-slider" data-route-slider aria-label="Скриншоты маршрута" tabindex="0">
+                            <div class="route-slider-viewport">
+                                <figure class="route-slide is-active">
+                                    <img src="../img/path1.png" alt="Маршрут до офиса, схема 1" draggable="false">
+                                </figure>
+                                <figure class="route-slide">
+                                    <img src="../img/path2.png" alt="Маршрут до офиса, схема 2" draggable="false">
+                                </figure>
+                            </div>
+                            <div class="route-slider-controls">
+                                <button class="route-slider-button" type="button" data-route-prev aria-label="Предыдущий слайд">&#10094;</button>
+                                <div class="route-slider-dots" role="tablist" aria-label="Навигация по слайдам">
+                                    <button class="route-slider-dot is-active" type="button" data-route-dot="0" aria-label="Открыть первый слайд" aria-current="true"></button>
+                                    <button class="route-slider-dot" type="button" data-route-dot="1" aria-label="Открыть второй слайд"></button>
+                                </div>
+                                <button class="route-slider-button" type="button" data-route-next aria-label="Следующий слайд">&#10095;</button>
+                            </div>
+                        </div>
+                    </div>
+</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand" href="index.html">
+                        <img src="../img/logo.png" alt="Логотип Заря">
+                    </a>
+                    <p>Прямые поставки зерновых и масличных культур. С полным контролем на всех этапах.</p>
+                </div>
+                <div class="footer-column">
+                    <strong>Навигация</strong>
+                    <div><a href="index.html">Главная</a></div>
+                    <div><a href="company.html">О компании</a></div>
+                    <div><a href="catalog.html">Каталог</a></div>
+                    <div><a href="news.html">Новости</a></div>
+                    <div><a href="contacts.html">Контакты</a></div>
+                </div>
+                <div class="footer-column">
+                    <strong>Связь</strong>
+                    <div><a href="tel:+78442551506">+7 844 255-15-06</a></div>
+                    <div><a href="mailto:zaryaofficial2014@mail.ru">zaryaofficial2014@mail.ru</a></div>
+                    <div>г. Волгоград, ул. Бурейская, 7</div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 ООО «Заря». Все права защищены.</div>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+

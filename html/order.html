@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заявки — Заря</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/common.js"></script>
+    <script src="../js/forms.js"></script>
+    <script src="../js/order.js"></script>
+    <link rel="stylesheet" href="../css/order.css">
+    <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a class="brand" href="index.html" aria-label="Заря">
+                <img src="../img/logo.png" alt="Логотип Заря">
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav" aria-label="Основная навигация">
+                <a href="index.html" data-nav="home">Главная</a>
+                <a href="company.html" data-nav="company">О компании</a>
+                <a href="catalog.html" data-nav="catalog">Каталог</a>
+                <a href="news.html" data-nav="news">Новости</a>
+                <a href="contacts.html" data-nav="contacts">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="order-shell">
+            <h1 class="page-title">Оформление заявки</h1>
+
+            <form id="purchase-request-form">
+                <section class="section-block">
+                    <div class="section-head">
+                        <h2>Контактное лицо</h2>
+                    </div>
+                    <div class="field-grid">
+                        <div class="field">
+                            <label for="person-name">ФИО <span class="required">*</span></label>
+                            <input id="person-name" name="full_name" type="text" required>
+                        </div>
+                        <div class="field">
+                            <label for="person-email">E-mail <span class="required">*</span></label>
+                            <input id="person-email" name="email" type="email" required>
+                        </div>
+                        <div class="field">
+                            <label for="person-role">Должность <span class="required">*</span></label>
+                            <input id="person-role" name="job_title" type="text" required>
+                        </div>
+                        <div class="field">
+                            <label for="person-phone">Телефон <span class="required">*</span></label>
+                            <input id="person-phone" name="phone" type="tel" required>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="section-head">
+                        <h2>Предприятие</h2>
+                    </div>
+                    <div class="field-grid single" style="margin-bottom: 30px;">
+                        <div class="field">
+                            <label for="company-name">Наименование организации <span class="required">*</span></label>
+                            <input id="company-name" name="company_name" type="text" required>
+                        </div>
+                    </div>
+                    <div class="field-grid" style="margin-bottom: 24px;">
+                        <div class="field">
+                            <label for="company-inn">ИНН <span class="required">*</span></label>
+                            <input id="company-inn" name="inn" type="text" inputmode="numeric" required>
+                        </div>
+                        <div class="field">
+                            <label for="company-ogrn">ОГРН <span class="required">*</span></label>
+                            <input id="company-ogrn" name="ogrn" type="text" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    <div class="field-grid single">
+                        <div class="field">
+                            <label for="company-address">Юридический адрес <span class="required">*</span></label>
+                            <input id="company-address" name="legal_address" type="text" required>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="product-heading">
+                        <div class="section-head" style="margin-bottom: 0;">
+                            <h2>Товар</h2>
+                        </div>
+                        <button class="add-product" type="button" id="add-product">Добавить товар</button>
+                    </div>
+                    <div class="product-lines" id="product-lines"></div>
+                </section>
+
+                <section class="section-block">
+                    <div class="section-head">
+                        <h2>Доставка</h2>
+                    </div>
+                    <div class="delivery-grid">
+                        <div class="field">
+                            <label for="delivery-type">Вид получения</label>
+                            <select id="delivery-type" name="delivery_type">
+                                <option value="">Выберите вариант</option>
+                                <option value="pickup">Самовывоз</option>
+                                <option value="company_transport">Доставка транспортом</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="delivery-comment">Примечание или комментарий</label>
+                            <textarea id="delivery-comment" name="delivery_comment"></textarea>
+                        </div>
+                        <div class="field is-hidden" id="delivery-address-field" hidden style="display: none;">
+                            <label for="delivery-address">Адрес доставки</label>
+                            <textarea id="delivery-address" name="delivery_address"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="agreement-row">
+                        <input id="agreement" name="agreement_accepted" type="checkbox" value="1" required>
+                        <label class="agreement-text" for="agreement">Я соглашаюсь на обработку персональных данных и подтверждаю, что введённые сведения достоверны. После отправки заявки на указанный e-mail будет направлен PDF-документ с уникальным номером.</label>
+                        <button class="submit-button" type="submit">Оформить заявку</button>
+                    </div>
+                </section>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand" href="index.html">
+                        <img src="../img/logo.png" alt="Логотип Заря">
+                    </a>
+                    <p>Прямые поставки зерновых и масличных культур. С полным контролем на всех этапах.</p>
+                </div>
+                <div class="footer-column">
+                    <strong>Навигация</strong>
+                    <div><a href="index.html">Главная</a></div>
+                    <div><a href="company.html">О компании</a></div>
+                    <div><a href="catalog.html">Каталог</a></div>
+                    <div><a href="news.html">Новости</a></div>
+                    <div><a href="contacts.html">Контакты</a></div>
+                </div>
+                <div class="footer-column">
+                    <strong>Связь</strong>
+                    <div><a href="tel:+78442551506">+7 844 255-15-06</a></div>
+                    <div><a href="mailto:zaryaofficial2014@mail.ru">zaryaofficial2014@mail.ru</a></div>
+                    <div>г. Волгоград, ул. Бурейская, 7</div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 ООО «Заря». Все права защищены.</div>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+

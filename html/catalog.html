@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог — Заря</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="../js/common.js"></script>
+    <script src="../js/catalog.js"></script>
+    <link rel="stylesheet" href="../css/catalog.css">
+    <link rel="stylesheet" href="../css/common.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a class="brand" href="index.html" aria-label="Заря">
+                <img src="../img/logo.png" alt="Логотип Заря">
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="nav" aria-label="Основная навигация">
+                <a href="index.html" data-nav="home">Главная</a>
+                <a href="company.html" data-nav="company">О компании</a>
+                <a href="catalog.html" data-nav="catalog">Каталог</a>
+                <a href="news.html" data-nav="news">Новости</a>
+                <a href="contacts.html" data-nav="contacts">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="catalog-hero">
+        <div class="container">
+            <div class="catalog-title">
+                <h1>Каталог товаров</h1>
+            </div>
+        </div>
+    </section>
+
+    <main class="catalog-main">
+        <div class="container">
+            <section class="filter-bar" aria-label="Сортировка каталога">
+                <strong>Сортировка</strong>
+                <div class="filter-buttons">
+                    <button class="filter-button is-active" type="button" data-filter="all">Все</button>
+                    <button class="filter-button" type="button" data-filter="wheat">Пшеница</button>
+                    <button class="filter-button" type="button" data-filter="corn">Кукуруза</button>
+                    <button class="filter-button" type="button" data-filter="sunflower">Подсолнечник</button>
+                </div>
+            </section>
+
+            <section class="catalog-grid" aria-label="Каталог продукции">
+                <article class="product-card" data-category="wheat" style="--card-image: url('img/wheat1.jpg');">
+                    <div class="product-image" style="background-position: 50% 44%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Пшеница озимая Жаворонок</h2>
+                        <p class="product-description">Продовольственная пшеница. Зерно полновесное, чистое, с хорошей натурой.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=wheat-javoronok">Заказать</a>
+                            <a class="pill-link" href="product.html?product=wheat-javoronok">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="wheat" style="--card-image: url('img/wheat2.jpg');">
+                    <div class="product-image" style="background-position: 64% 28%; filter: saturate(0.84);"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Пшеница яровая мягкая</h2>
+                        <p class="product-description">Чистое продовольственное зерно яровой пшеницы. Содержание клейковины среднее, зерно выполненное.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=wheat-soft">Заказать</a>
+                            <a class="pill-link" href="product.html?product=wheat-soft">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="wheat" style="--card-image: url('img/wheat3.jpg');">
+                    <div class="product-image" style="background-position: 51% 22%; filter: brightness(0.9);"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Пшеница яровая твердая Таганрог</h2>
+                        <p class="product-description">Зерно твердых сортов пшеницы светлого цвета. Богато белком и каротиноидами.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=wheat-taganrog">Заказать</a>
+                            <a class="pill-link" href="product.html?product=wheat-taganrog">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="sunflower" style="--card-image: url('img/sunflower1.jpg');">
+                    <div class="product-image" style="background-position: 36% 60%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Подсолнечник ЕС Ароматик</h2>
+                        <p class="product-description">Крупная, выполненная семечка с высокой масличностью до 52%. Зерно чистое, сухое.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=sunflower-aromatik">Заказать</a>
+                            <a class="pill-link" href="product.html?product=sunflower-aromatik">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="sunflower" style="--card-image: url('img/sunflower2.jpg');">
+                    <div class="product-image" style="background-position: 62% 44%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Подсолнечник Кречет</h2>
+                        <p class="product-description">Надежный сорт для маслоэкстракции. Масличность стабильно держится в пределах 48–52%, семечка крупная.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=sunflower-krechet">Заказать</a>
+                            <a class="pill-link" href="product.html?product=sunflower-krechet">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="sunflower" style="--card-image: url('img/sunflower3.jpg');">
+                    <div class="product-image" style="background-position: 84% 58%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Подсолнечник гибрид Валентина</h2>
+                        <p class="product-description">Семечка с повышенным содержанием олеиновой кислоты, масло высококачественное, неокисляемое.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=sunflower-valentina">Заказать</a>
+                            <a class="pill-link" href="product.html?product=sunflower-valentina">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="sunflower" style="--card-image: url('img/sunflower4.jpg');">
+                    <div class="product-image" style="background-position: 28% 76%; filter: brightness(0.94);"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Подсолнечник Барле</h2>
+                        <p class="product-description">Урожайный подсолнечник с масличностью 49–51%. Семечка крупная, качество зерна стабильное.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=sunflower-barle">Заказать</a>
+                            <a class="pill-link" href="product.html?product=sunflower-barle">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="sunflower" style="--card-image: url('img/sunflower5.jpg');">
+                    <div class="product-image" style="background-position: 58% 78%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Подсолнечник Мас 920 КП</h2>
+                        <p class="product-description">Среднеспелый гибрид французской селекции. Масличность семян 42,5–47,5%, семечка выполненная.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=sunflower-mas920">Заказать</a>
+                            <a class="pill-link" href="product.html?product=sunflower-mas920">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="corn" style="--card-image: url('img/corn1.jpg');">
+                    <div class="product-image" style="background-position: 72% 62%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Кукуруза ДКС 4014</h2>
+                        <p class="product-description">Зерно зубовидного типа, желтое, полновесное. Подходит для кормовых целей и переработки на крупу.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=corn-dks4014">Заказать</a>
+                            <a class="pill-link" href="product.html?product=corn-dks4014">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="corn" style="--card-image: url('img/corn2.jpg');">
+                    <div class="product-image" style="background-position: 86% 72%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Кукуруза ДКС 4178</h2>
+                        <p class="product-description">Зерно зубовидное, желтое, крупное. Гибрид зернового направления, востребован комбикормовыми заводами.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=corn-dks4178">Заказать</a>
+                            <a class="pill-link" href="product.html?product=corn-dks4178">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-category="corn" style="--card-image: url('img/corn3.jpg');">
+                    <div class="product-image" style="background-position: 94% 74%;"></div>
+                    <div class="product-body">
+                        <h2 class="product-title">Кукуруза ДКС 3710</h2>
+                        <p class="product-description">Зерно зубовидное, желтое. Гибрид отличается универсальностью, подходит на корм и на переработку.</p>
+                        <div class="product-actions">
+                            <a class="pill-link" href="order.html?product=corn-dks3710">Заказать</a>
+                            <a class="pill-link" href="product.html?product=corn-dks3710">Узнать больше</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand" href="index.html">
+                        <img src="../img/logo.png" alt="Логотип Заря">
+                    </a>
+                    <p>Прямые поставки зерновых и масличных культур. С полным контролем на всех этапах.</p>
+                </div>
+                <div class="footer-column">
+                    <strong>Навигация</strong>
+                    <div><a href="index.html">Главная</a></div>
+                    <div><a href="company.html">О компании</a></div>
+                    <div><a href="catalog.html">Каталог</a></div>
+                    <div><a href="news.html">Новости</a></div>
+                    <div><a href="contacts.html">Контакты</a></div>
+                </div>
+                <div class="footer-column">
+                    <strong>Связь</strong>
+                    <div><a href="tel:+78442551506">+7 844 255-15-06</a></div>
+                    <div><a href="mailto:zaryaofficial2014@mail.ru">zaryaofficial2014@mail.ru</a></div>
+                    <div>г. Волгоград, ул. Бурейская, 7</div>
+                </div>
+            </div>
+            <div class="footer-bottom">© 2026 ООО «Заря». Все права защищены.</div>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
