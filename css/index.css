@@ -1,4 +1,4 @@
-@keyframes index-hero-slide-up {
+﻿@keyframes index-hero-slide-up {
             0% {
                 opacity: 0;
                 transform: translateY(34px);
@@ -129,7 +129,7 @@ html {
                 content: "";
                 position: absolute;
                 inset: 0;
-                background: url("../img/mainhero.png") center center / cover no-repeat;
+                background: url("../img/mainhero.webp") center center / cover no-repeat;
                 filter: brightness(0.78) contrast(0.84) saturate(0.88);
                 transform: scale(1.01);
             }
@@ -727,17 +727,17 @@ html {
             }
 
             .news-card:nth-child(1) {
-                background-image: url("../img/news1.jpg");
+                background-image: url("../img/news1.webp");
                 background-position: center;
             }
 
             .news-card:nth-child(2) {
-                background-image: url("../img/news2.jpg");
+                background-image: url("../img/news2.webp");
                 background-position: center;
             }
 
             .news-card:nth-child(3) {
-                background-image: url("../img/news3.jpg");
+                background-image: url("../img/news3.webp");
                 background-position: center;
             }
 
@@ -1308,3 +1308,4 @@ html {
                     font-size: 14px;
                 }
             }
+

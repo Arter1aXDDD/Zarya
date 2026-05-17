@@ -1,4 +1,4 @@
-@keyframes catalog-catalog-title-rise {
+﻿@keyframes catalog-catalog-title-rise {
             0% {
                 opacity: 0;
                 filter: blur(8px);
@@ -137,7 +137,7 @@ html {
                 background:
                     linear-gradient(180deg, rgba(24, 16, 8, 0.28) 0%, rgba(24, 16, 8, 0.4) 100%),
                     linear-gradient(90deg, rgba(16, 13, 8, 0.36) 0%, rgba(16, 13, 8, 0.14) 46%, rgba(16, 13, 8, 0.24) 100%),
-                    url("../img/cataloghero.jpg") center 44% / cover no-repeat;
+                    url("../img/cataloghero.webp") center 44% / cover no-repeat;
                 filter: brightness(0.64) contrast(0.9) saturate(1.08);
                 transform: scale(1.03);
             }
@@ -639,3 +639,4 @@ html {
                     line-height: 1.45;
                 }
             }
+
