@@ -914,6 +914,7 @@ html {
 
             @media (max-width: 900px) {
                 .hero::before {
+                    background-image: url("../img/mainhero-mobile.webp");
                     background-position: 62% center;
                     filter: none;
                     transform: none;
