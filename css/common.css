@@ -71,22 +71,49 @@
     }
 
     html.has-site-nav .site-header .nav {
-        display: none;
+        display: flex;
         width: 100%;
         flex-direction: column;
         gap: 0;
-        margin-top: 2px;
-        padding: 8px 18px;
-        border: 1px solid rgba(255, 240, 213, 0.16);
+        max-height: 0;
+        margin-top: 0;
+        padding: 0 18px;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transform-origin: top center;
+        border: 1px solid transparent;
         border-radius: 22px;
         background: rgba(35, 49, 37, 0.42);
-        box-shadow:
-            inset 0 1px 0 rgba(255, 240, 213, 0.08),
-            0 12px 28px rgba(19, 28, 20, 0.18);
+        box-shadow: none;
+        transition:
+            max-height 0.3s ease,
+            margin-top 0.3s ease,
+            padding-top 0.3s ease,
+            padding-bottom 0.3s ease,
+            opacity 0.22s ease,
+            transform 0.3s ease,
+            border-color 0.22s ease,
+            box-shadow 0.22s ease,
+            visibility 0s linear 0.3s;
     }
 
     html.has-site-nav .site-header.is-menu-open .nav {
-        display: flex;
+        max-height: 420px;
+        margin-top: 2px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+        border-color: rgba(255, 240, 213, 0.16);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 240, 213, 0.08),
+            0 12px 28px rgba(19, 28, 20, 0.18);
+        transition-delay: 0s;
     }
 
     html.has-site-nav .site-header .nav a {
@@ -94,6 +121,38 @@
         width: 100%;
         margin: 0;
         padding: 13px 0;
+        opacity: 0;
+        transform: translateY(-6px);
+        transition:
+            opacity 0.18s ease,
+            transform 0.24s ease,
+            border-color 0.2s ease;
+        transition-delay: 0s;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a:nth-child(1) {
+        transition-delay: 0.04s;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a:nth-child(2) {
+        transition-delay: 0.08s;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a:nth-child(3) {
+        transition-delay: 0.12s;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a:nth-child(4) {
+        transition-delay: 0.16s;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav a:nth-child(5) {
+        transition-delay: 0.2s;
     }
 
     html.has-site-nav .site-header .nav a + a {
@@ -119,8 +178,14 @@
     }
 
     html.has-site-nav .site-header .nav {
-        padding: 6px 16px;
+        padding-left: 16px;
+        padding-right: 16px;
         border-radius: 18px;
+    }
+
+    html.has-site-nav .site-header.is-menu-open .nav {
+        padding-top: 6px;
+        padding-bottom: 6px;
     }
 
     html.has-site-nav .site-header .nav a {
