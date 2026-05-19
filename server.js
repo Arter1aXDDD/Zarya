@@ -13,6 +13,10 @@ async function startServer() {
 
     app.disable("x-powered-by");
 
+    if (env.nodeEnv === "production") {
+        app.set("trust proxy", 1);
+    }
+
     let adminState = null;
 
     try {

@@ -111,6 +111,7 @@ function buildConnectionString() {
 
 function buildSessionOptions() {
     return {
+        proxy: env.nodeEnv === "production",
         resave: false,
         saveUninitialized: false,
         secret: env.adminCookiePassword,
