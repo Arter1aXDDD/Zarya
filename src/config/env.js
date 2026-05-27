@@ -36,6 +36,9 @@ const smtpHost = trimToNull(process.env.SMTP_HOST);
 const smtpUser = trimToNull(process.env.SMTP_USER);
 const smtpPass = trimToNull(process.env.SMTP_PASS);
 const smtpFrom = trimToNull(process.env.SMTP_FROM) || smtpUser;
+const resendApiKey = trimToNull(process.env.RESEND_API_KEY);
+const resendTestToEmail = trimToNull(process.env.RESEND_TEST_TO_EMAIL);
+const resendReplyTo = trimToNull(process.env.RESEND_REPLY_TO) || trimToNull(process.env.ORDER_NOTIFICATION_EMAIL) || smtpFrom;
 const cloudinaryCloudName = trimToNull(process.env.CLOUDINARY_CLOUD_NAME);
 const cloudinaryApiKey = trimToNull(process.env.CLOUDINARY_API_KEY);
 const cloudinaryApiSecret = trimToNull(process.env.CLOUDINARY_API_SECRET);
@@ -55,6 +58,9 @@ const env = {
     smtpUser,
     smtpPass,
     smtpFrom,
+    resendApiKey,
+    resendTestToEmail,
+    resendReplyTo,
     orderNotificationEmail: trimToNull(process.env.ORDER_NOTIFICATION_EMAIL),
     invoiceFontPath: trimToNull(process.env.INVOICE_FONT_PATH),
     cloudinaryCloudName,
@@ -66,6 +72,7 @@ const env = {
 };
 
 env.smtpConfigured = Boolean(env.smtpHost && env.smtpUser && env.smtpPass && env.smtpFrom);
+env.resendConfigured = Boolean(env.resendApiKey && env.resendTestToEmail);
 env.cloudinaryConfigured = Boolean(env.cloudinaryCloudName && env.cloudinaryApiKey && env.cloudinaryApiSecret);
 
 module.exports = { env };

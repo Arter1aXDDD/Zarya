@@ -33,6 +33,11 @@ const readOnlyActions = {
     delete: { isAccessible: false },
     bulkDelete: { isAccessible: false }
 };
+const noCreateOrDeleteActions = {
+    new: { isAccessible: false },
+    delete: { isAccessible: false },
+    bulkDelete: { isAccessible: false }
+};
 
 function trimToNull(value) {
     if (typeof value !== "string") {
@@ -142,6 +147,16 @@ function makeReadOnlyOptions(options) {
     };
 }
 
+function makeEditableOperationsOptions(options) {
+    return {
+        ...options,
+        actions: {
+            ...noCreateOrDeleteActions,
+            ...(options.actions || {})
+        }
+    };
+}
+
 function buildCatalogResources(db) {
     return [
         {
@@ -225,12 +240,14 @@ function buildOperationsResources(db) {
     return [
         {
             resource: db.table("contact_message"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["contact_message_id", "source_page", "name", "phone", "email", "status", "created_at"],
+                editProperties: ["source_page", "name", "phone", "email", "message", "status", "processed_by_admin_user_id"],
                 filterProperties: ["source_page", "name", "phone", "email", "status", "created_at"],
                 showProperties: ["contact_message_id", "source_page", "name", "phone", "email", "message", "status", "processed_by_admin_user_id", "created_at"],
                 properties: {
+                    contact_message_id: hiddenOnEditProperty,
                     source_page: {
                         availableValues: [
                             { value: "home", label: "Главная" },
@@ -248,30 +265,35 @@ function buildOperationsResources(db) {
                     message: {
                         type: "textarea"
                     },
-                    processed_by_admin_user_id: hiddenOnListProperty
+                    processed_by_admin_user_id: hiddenOnListProperty,
+                    created_at: hiddenOnEditProperty
                 }
             })
         },
         {
             resource: db.table("company_contact"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["company_contact_id", "full_name", "email", "job_title", "phone", "created_at"],
+                editProperties: ["full_name", "email", "job_title", "phone"],
                 filterProperties: ["full_name", "email", "phone", "created_at"],
                 showProperties: ["company_contact_id", "full_name", "email", "job_title", "phone", "created_at", "updated_at"],
                 properties: {
+                    company_contact_id: hiddenOnEditProperty,
                     ...makeTimestampProperties()
                 }
             })
         },
         {
             resource: db.table("company_partner"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["company_partner_id", "company_name", "inn", "ogrn", "created_at"],
+                editProperties: ["company_name", "inn", "ogrn", "legal_address"],
                 filterProperties: ["company_name", "inn", "ogrn", "created_at"],
                 showProperties: ["company_partner_id", "company_name", "inn", "ogrn", "legal_address", "created_at", "updated_at"],
                 properties: {
+                    company_partner_id: hiddenOnEditProperty,
                     legal_address: {
                         type: "textarea"
                     },
@@ -281,12 +303,15 @@ function buildOperationsResources(db) {
         },
         {
             resource: db.table("purchase_request"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["purchase_request_id", "request_number", "company_contact_id", "company_partner_id", "status", "agreement_accepted", "created_at"],
+                editProperties: ["company_contact_id", "company_partner_id", "status", "agreement_accepted", "processed_by_admin_user_id"],
                 filterProperties: ["request_number", "company_contact_id", "company_partner_id", "status", "created_at"],
                 showProperties: ["purchase_request_id", "request_number", "company_contact_id", "company_partner_id", "status", "agreement_accepted", "processed_by_admin_user_id", "created_at", "updated_at"],
                 properties: {
+                    purchase_request_id: hiddenOnEditProperty,
+                    request_number: hiddenOnEditProperty,
                     status: {
                         availableValues: [
                             { value: "new", label: "Новая" },
@@ -304,21 +329,27 @@ function buildOperationsResources(db) {
         },
         {
             resource: db.table("request_product"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["request_product_id", "purchase_request_id", "product_id", "quantity_tons", "price"],
+                editProperties: ["purchase_request_id", "product_id", "quantity_tons", "price"],
                 filterProperties: ["purchase_request_id", "product_id"],
-                showProperties: ["request_product_id", "purchase_request_id", "product_id", "quantity_tons", "price"]
+                showProperties: ["request_product_id", "purchase_request_id", "product_id", "quantity_tons", "price"],
+                properties: {
+                    request_product_id: hiddenOnEditProperty
+                }
             })
         },
         {
             resource: db.table("delivery"),
-            options: makeReadOnlyOptions({
+            options: makeEditableOperationsOptions({
                 navigation: "Заявки и сообщения",
                 listProperties: ["delivery_id", "purchase_request_id", "delivery_type", "created_at"],
+                editProperties: ["purchase_request_id", "delivery_type", "delivery_address", "delivery_comment"],
                 filterProperties: ["purchase_request_id", "delivery_type", "created_at"],
                 showProperties: ["delivery_id", "purchase_request_id", "delivery_type", "delivery_address", "delivery_comment", "created_at", "updated_at"],
                 properties: {
+                    delivery_id: hiddenOnEditProperty,
                     delivery_type: {
                         availableValues: [
                             { value: "pickup", label: "Самовывоз" },
