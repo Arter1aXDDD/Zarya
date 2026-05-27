@@ -23,13 +23,13 @@ function getEmailStatusSummary() {
     if (!env.orderNotificationEmail) {
         return {
             configured: true,
-            message: `SMTP настроен для ${env.smtpHost}:${env.smtpPort}. Накладные будут отправляться только контактному лицу из заявки.`
+            message: `SMTP настроен для ${env.smtpHost}:${env.smtpPort}. Накладные будут отправляться только на служебный адрес после заполнения ORDER_NOTIFICATION_EMAIL.`
         };
     }
 
     return {
         configured: true,
-        message: `SMTP настроен для ${env.smtpHost}:${env.smtpPort}. Копия накладной также будет отправляться на ${env.orderNotificationEmail}.`
+        message: `Почта настроена. Накладные будут отправляться только на ${env.orderNotificationEmail}.`
     };
 }
 
@@ -42,26 +42,12 @@ function escapeHtml(value) {
         .replace(/'/g, "&#39;");
 }
 
-function buildRecipientTargets(contactEmail) {
-    const candidates = [
-        contactEmail ? { email: contactEmail, kind: "contact" } : null,
-        env.orderNotificationEmail ? { email: env.orderNotificationEmail, kind: "company" } : null
-    ].filter(Boolean);
-
-    const uniqueTargets = [];
-    const seen = new Set();
-
-    for (const candidate of candidates) {
-        const normalized = String(candidate.email).trim().toLowerCase();
-        if (!normalized || seen.has(normalized)) {
-            continue;
-        }
-
-        seen.add(normalized);
-        uniqueTargets.push(candidate);
+function buildRecipientTargets() {
+    if (!env.orderNotificationEmail) {
+        return [];
     }
 
-    return uniqueTargets;
+    return [{ email: env.orderNotificationEmail, kind: "company" }];
 }
 
 function formatFromHeader() {
@@ -140,12 +126,10 @@ function wasAccepted(info, recipient) {
     return info.accepted.some((accepted) => String(accepted).trim().toLowerCase() === recipient.trim().toLowerCase());
 }
 
-async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, invoiceBuffer, invoiceFileName }) {
-    const recipients = buildRecipientTargets(contactEmail);
+async function sendPurchaseRequestInvoiceEmail({ requestNumber, invoiceBuffer, invoiceFileName }) {
+    const recipients = buildRecipientTargets();
 
     if (env.resendConfigured) {
-        const primaryRecipientKind = recipients.some((recipient) => recipient.kind === "contact") ? "contact" : "company";
-
         try {
             const response = await fetch(RESEND_API_URL, {
                 method: "POST",
@@ -158,9 +142,9 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
                     from: RESEND_FROM,
                     to: [env.resendTestToEmail],
                     ...(env.resendReplyTo ? { reply_to: env.resendReplyTo } : {}),
-                    subject: buildSubject(requestNumber, primaryRecipientKind),
-                    text: buildTextBody({ requestNumber, recipientKind: primaryRecipientKind }),
-                    html: buildHtmlBody({ requestNumber, recipientKind: primaryRecipientKind }),
+                    subject: buildSubject(requestNumber, "company"),
+                    text: buildTextBody({ requestNumber, recipientKind: "company" }),
+                    html: buildHtmlBody({ requestNumber, recipientKind: "company" }),
                     attachments: [
                         {
                             filename: invoiceFileName,
@@ -200,7 +184,7 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
     if (!env.smtpConfigured) {
         return {
             status: "skipped",
-            message: "SMTP пока не настроен. Заявка сохранена, но накладная не была отправлена.",
+            message: "Почта пока не настроена. Для отправки укажи либо RESEND_API_KEY + RESEND_TEST_TO_EMAIL, либо полный набор SMTP_*.",
             recipients: recipients.map((recipient) => recipient.email)
         };
     }
@@ -208,7 +192,7 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
     if (!recipients.length) {
         return {
             status: "failed",
-            message: "Заявка сохранена, но адреса получателей для накладной не найдены.",
+            message: "Почта настроена не до конца: не задан ORDER_NOTIFICATION_EMAIL.",
             recipients: [],
             failedRecipients: []
         };
