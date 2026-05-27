@@ -57,6 +57,15 @@ function resolveInvoiceFontPath() {
     return candidates.find((candidate) => fs.existsSync(candidate)) || null;
 }
 
+function compactText(value, fallback = "—") {
+    if (value === undefined || value === null) {
+        return fallback;
+    }
+
+    const normalized = String(value).replace(/\s+/g, " ").trim();
+    return normalized || fallback;
+}
+
 function ensureSpace(doc, height) {
     const bottomLimit = doc.page.height - doc.page.margins.bottom;
     if (doc.y + height > bottomLimit) {
@@ -64,7 +73,7 @@ function ensureSpace(doc, height) {
     }
 }
 
-function drawRoundedPanel(doc, { x, y, width, height, fill = "#ffffff", stroke = COLORS.border, radius = 8 }) {
+function drawRoundedPanel(doc, { x, y, width, height, fill = "#ffffff", stroke = COLORS.border, radius = 7 }) {
     doc.save();
     doc.fillColor(fill);
     doc.strokeColor(stroke);
@@ -81,164 +90,171 @@ function drawHeader(doc, invoice) {
     const leftX = doc.page.margins.left;
     const topY = doc.page.margins.top;
     const contentWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    const rightPanelWidth = 188;
-    const rightPanelHeight = 92;
-    const rightPanelX = leftX + contentWidth - rightPanelWidth;
+    const metaWidth = 182;
+    const metaHeight = 66;
+    const metaX = leftX + contentWidth - metaWidth;
 
     doc.save();
     doc.fillColor(COLORS.accent);
-    doc.rect(leftX, topY - 10, contentWidth, 7).fill();
+    doc.rect(leftX, topY - 8, contentWidth, 6).fill();
     doc.restore();
 
-    doc.x = leftX;
-    doc.y = topY + 10;
-    doc.fontSize(11).fillColor(COLORS.accent).text("ООО «Заря»", { width: 280 });
-    doc.moveDown(0.25);
-    doc.fontSize(24).fillColor(COLORS.text).text("Накладная по заявке", { width: 300 });
-    doc.moveDown(0.15);
-    doc.fontSize(11).fillColor(COLORS.muted).text(
+    doc.fontSize(10).fillColor(COLORS.accent).text("ООО «Заря»", leftX, topY + 4, { width: 230 });
+    doc.fontSize(21).fillColor(COLORS.text).text("Накладная по заявке", leftX, topY + 18, { width: 260 });
+    doc.fontSize(9).fillColor(COLORS.muted).text(
         "Документ на поставку сельскохозяйственной продукции",
-        { width: 300 }
+        leftX,
+        topY + 45,
+        { width: 280 }
     );
 
     drawRoundedPanel(doc, {
-        x: rightPanelX,
-        y: topY + 6,
-        width: rightPanelWidth,
-        height: rightPanelHeight,
+        x: metaX,
+        y: topY + 2,
+        width: metaWidth,
+        height: metaHeight,
         fill: COLORS.accentSoft,
-        stroke: COLORS.border,
-        radius: 10
+        stroke: COLORS.border
     });
 
-    const metaX = rightPanelX + 14;
-    let metaY = topY + 20;
-    doc.fontSize(10).fillColor(COLORS.muted).text("Номер заявки", metaX, metaY, { width: 160 });
-    metaY += 14;
-    doc.fontSize(16).fillColor(COLORS.text).text(invoice.requestNumber, metaX, metaY, { width: 160 });
-    metaY += 24;
-    doc.fontSize(10).fillColor(COLORS.muted).text("Дата оформления", metaX, metaY, { width: 160 });
-    metaY += 14;
-    doc.fontSize(11).fillColor(COLORS.text).text(formatDateTime(invoice.createdAt), metaX, metaY, { width: 160 });
+    doc.fontSize(8.5).fillColor(COLORS.muted).text("Номер заявки", metaX + 12, topY + 14, { width: 158 });
+    doc.fontSize(13.5).fillColor(COLORS.text).text(invoice.requestNumber, metaX + 12, topY + 25, { width: 158 });
+    doc.fontSize(8.5).fillColor(COLORS.muted).text("Дата оформления", metaX + 12, topY + 42, { width: 158 });
+    doc.fontSize(9.5).fillColor(COLORS.text).text(formatDateTime(invoice.createdAt), metaX + 12, topY + 53, { width: 158 });
 
-    doc.y = Math.max(doc.y, topY + 6 + rightPanelHeight) + 16;
+    doc.y = topY + metaHeight + 14;
 }
 
-function drawSectionBlock(doc, title, rows) {
-    const x = doc.page.margins.left;
-    const width = doc.page.width - doc.page.margins.left - doc.page.margins.right;
-    const padding = 14;
-    const labelWidth = 156;
-
-    doc.fontSize(10);
+function measureInfoCard(doc, width, rows) {
+    const padding = 10;
+    const labelWidth = 78;
+    const valueWidth = width - padding * 2 - labelWidth - 8;
     let rowsHeight = 0;
 
+    doc.fontSize(8.5);
+
     for (const row of rows) {
-        const value = row.value || "—";
-        const valueHeight = doc.heightOfString(String(value), {
-            width: width - padding * 2 - labelWidth - 8
+        const valueHeight = doc.heightOfString(compactText(row.value), {
+            width: valueWidth,
+            lineGap: 1
         });
-        rowsHeight += Math.max(14, valueHeight) + 8;
+        rowsHeight += Math.max(11, valueHeight) + 4;
     }
 
-    const blockHeight = padding + 18 + 10 + rowsHeight + 4;
-    ensureSpace(doc, blockHeight + 12);
+    return padding + 16 + rowsHeight + 6;
+}
 
-    const y = doc.y;
+function drawInfoCard(doc, { x, y, width, title, rows, height }) {
+    const padding = 10;
+    const labelWidth = 78;
+    const valueWidth = width - padding * 2 - labelWidth - 8;
+
     drawRoundedPanel(doc, {
         x,
         y,
         width,
-        height: blockHeight,
+        height,
         fill: "#ffffff",
-        stroke: COLORS.border,
-        radius: 10
+        stroke: COLORS.border
     });
 
-    doc.fontSize(12).fillColor(COLORS.accent).text(title, x + padding, y + padding, {
-        width: width - padding * 2
-    });
+    doc.fontSize(10.5).fillColor(COLORS.accent).text(title, x + padding, y + padding, { width: width - padding * 2 });
 
-    let rowY = y + padding + 24;
+    let rowY = y + padding + 16;
+    doc.fontSize(8.5);
 
     for (const row of rows) {
-        const value = row.value || "—";
-        const valueHeight = doc.heightOfString(String(value), {
-            width: width - padding * 2 - labelWidth - 8
+        const value = compactText(row.value);
+        const valueHeight = doc.heightOfString(value, {
+            width: valueWidth,
+            lineGap: 1
         });
-        const rowHeight = Math.max(14, valueHeight);
+        const rowHeight = Math.max(11, valueHeight);
 
-        doc.fontSize(10).fillColor(COLORS.muted).text(`${row.label}:`, x + padding, rowY, {
-            width: labelWidth
+        doc.fillColor(COLORS.muted).text(`${row.label}:`, x + padding, rowY, {
+            width: labelWidth,
+            lineGap: 1
         });
-        doc.fillColor(COLORS.text).text(String(value), x + padding + labelWidth + 8, rowY, {
-            width: width - padding * 2 - labelWidth - 8
+        doc.fillColor(COLORS.text).text(value, x + padding + labelWidth + 8, rowY, {
+            width: valueWidth,
+            lineGap: 1
         });
 
-        rowY += rowHeight + 8;
+        rowY += rowHeight + 4;
     }
+}
 
-    doc.y = y + blockHeight + 14;
+function drawInfoCardRow(doc, leftCard, rightCard) {
+    const x = doc.page.margins.left;
+    const gap = 12;
+    const width = (doc.page.width - doc.page.margins.left - doc.page.margins.right - gap) / 2;
+    const leftHeight = measureInfoCard(doc, width, leftCard.rows);
+    const rightHeight = measureInfoCard(doc, width, rightCard.rows);
+    const height = Math.max(leftHeight, rightHeight);
+
+    ensureSpace(doc, height + 10);
+
+    const y = doc.y;
+    drawInfoCard(doc, { x, y, width, title: leftCard.title, rows: leftCard.rows, height });
+    drawInfoCard(doc, { x: x + width + gap, y, width, title: rightCard.title, rows: rightCard.rows, height });
+    doc.y = y + height + 10;
 }
 
 function drawItemsTable(doc, invoice) {
     const x = doc.page.margins.left;
     const width = doc.page.width - doc.page.margins.left - doc.page.margins.right;
     const columns = {
-        number: 36,
-        name: 215,
-        quantity: 72,
-        price: 88,
-        total: 100
+        number: 24,
+        name: 252,
+        quantity: 54,
+        price: 76,
+        total: 85
     };
-    const paddingX = 8;
+    const paddingX = 6;
 
-    ensureSpace(doc, 80);
-    doc.fontSize(14).fillColor(COLORS.text).text("Состав поставки", x, doc.y, { width });
-    doc.moveDown(0.35);
+    ensureSpace(doc, 58);
+    doc.fontSize(11).fillColor(COLORS.text).text("Состав поставки", x, doc.y, { width });
+    doc.moveDown(0.2);
 
-    const drawTableHeader = (label = "Состав поставки") => {
-        if (label) {
-            doc.fontSize(13).fillColor(COLORS.text).text(label, x, doc.y, { width });
-            doc.moveDown(0.25);
-        }
-
-        ensureSpace(doc, 30);
+    const drawTableHeader = () => {
+        ensureSpace(doc, 24);
         const headerY = doc.y;
 
         doc.save();
         doc.fillColor(COLORS.tableHeader);
-        doc.roundedRect(x, headerY, width, 26, 8).fill();
+        doc.roundedRect(x, headerY, width, 22, 7).fill();
         doc.restore();
 
         let cursorX = x + paddingX;
-        doc.fontSize(10).fillColor("#ffffff");
-        doc.text("№", cursorX, headerY + 8, { width: columns.number - paddingX * 2, align: "left" });
+        doc.fontSize(8.5).fillColor("#ffffff");
+        doc.text("№", cursorX, headerY + 6, { width: columns.number - paddingX * 2 });
         cursorX += columns.number;
-        doc.text("Наименование", cursorX + paddingX, headerY + 8, { width: columns.name - paddingX * 2 });
+        doc.text("Наименование", cursorX + paddingX, headerY + 6, { width: columns.name - paddingX * 2 });
         cursorX += columns.name;
-        doc.text("Кол-во, т", cursorX + paddingX, headerY + 8, { width: columns.quantity - paddingX * 2, align: "right" });
+        doc.text("Кол-во", cursorX + paddingX, headerY + 6, { width: columns.quantity - paddingX * 2, align: "right" });
         cursorX += columns.quantity;
-        doc.text("Цена, руб./т", cursorX + paddingX, headerY + 8, { width: columns.price - paddingX * 2, align: "right" });
+        doc.text("Цена", cursorX + paddingX, headerY + 6, { width: columns.price - paddingX * 2, align: "right" });
         cursorX += columns.price;
-        doc.text("Сумма, руб.", cursorX + paddingX, headerY + 8, { width: columns.total - paddingX * 2, align: "right" });
+        doc.text("Сумма", cursorX + paddingX, headerY + 6, { width: columns.total - paddingX * 2, align: "right" });
 
-        doc.y = headerY + 32;
+        doc.y = headerY + 26;
     };
 
-    drawTableHeader("");
+    drawTableHeader();
 
     invoice.items.forEach((item, index) => {
-        doc.fontSize(10);
+        doc.fontSize(8.5);
         const rowHeight = Math.max(
-            20,
-            doc.heightOfString(item.name, { width: columns.name - paddingX * 2 }) + 10
+            15,
+            doc.heightOfString(compactText(item.name), {
+                width: columns.name - paddingX * 2,
+                lineGap: 1
+            }) + 5
         );
 
-        if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+        if (doc.y + rowHeight > doc.page.height - doc.page.margins.bottom - 70) {
             doc.addPage();
-            doc.font(resolveInvoiceFontPath());
-            drawTableHeader("Состав поставки (продолжение)");
+            drawTableHeader();
         }
 
         const rowY = doc.y;
@@ -246,89 +262,80 @@ function drawItemsTable(doc, invoice) {
         if (index % 2 === 0) {
             doc.save();
             doc.fillColor(COLORS.tableStripe);
-            doc.roundedRect(x, rowY - 2, width, rowHeight + 4, 6).fill();
+            doc.roundedRect(x, rowY - 1, width, rowHeight + 2, 5).fill();
             doc.restore();
         }
 
         let cursorX = x + paddingX;
         doc.fillColor(COLORS.text);
-        doc.text(String(index + 1), cursorX, rowY + 6, { width: columns.number - paddingX * 2 });
+        doc.text(String(index + 1), cursorX, rowY + 4, { width: columns.number - paddingX * 2 });
         cursorX += columns.number;
-        doc.text(item.name, cursorX + paddingX, rowY + 6, { width: columns.name - paddingX * 2 });
+        doc.text(compactText(item.name), cursorX + paddingX, rowY + 4, {
+            width: columns.name - paddingX * 2,
+            lineGap: 1
+        });
         cursorX += columns.name;
-        doc.text(formatQuantity(item.quantityTons), cursorX + paddingX, rowY + 6, {
+        doc.text(formatQuantity(item.quantityTons), cursorX + paddingX, rowY + 4, {
             width: columns.quantity - paddingX * 2,
             align: "right"
         });
         cursorX += columns.quantity;
-        doc.text(formatCurrency(item.price), cursorX + paddingX, rowY + 6, {
+        doc.text(formatCurrency(item.price), cursorX + paddingX, rowY + 4, {
             width: columns.price - paddingX * 2,
             align: "right"
         });
         cursorX += columns.price;
-        doc.text(formatCurrency(item.lineTotal), cursorX + paddingX, rowY + 6, {
+        doc.text(formatCurrency(item.lineTotal), cursorX + paddingX, rowY + 4, {
             width: columns.total - paddingX * 2,
             align: "right"
         });
 
         doc.save();
         doc.strokeColor(COLORS.border);
-        doc.moveTo(x, rowY + rowHeight + 4).lineTo(x + width, rowY + rowHeight + 4).stroke();
+        doc.moveTo(x, rowY + rowHeight + 2).lineTo(x + width, rowY + rowHeight + 2).stroke();
         doc.restore();
 
-        doc.y = rowY + rowHeight + 10;
+        doc.y = rowY + rowHeight + 6;
     });
 }
 
 function drawSummary(doc, invoice) {
-    const width = 198;
+    const width = 194;
     const x = doc.page.width - doc.page.margins.right - width;
 
-    ensureSpace(doc, 92);
-    const y = doc.y + 4;
+    ensureSpace(doc, 58);
+    const y = doc.y + 2;
 
     drawRoundedPanel(doc, {
         x,
         y,
         width,
-        height: 74,
+        height: 48,
         fill: COLORS.accentSoft,
-        stroke: COLORS.border,
-        radius: 10
+        stroke: COLORS.border
     });
 
-    doc.fontSize(10).fillColor(COLORS.muted).text("Итоговая сумма", x + 14, y + 14, { width: width - 28 });
-    doc.fontSize(18).fillColor(COLORS.text).text(`${formatCurrency(invoice.totalAmount)} руб.`, x + 14, y + 30, {
-        width: width - 28,
+    doc.fontSize(8.5).fillColor(COLORS.muted).text("Итоговая сумма", x + 12, y + 10, { width: width - 24 });
+    doc.fontSize(15).fillColor(COLORS.text).text(`${formatCurrency(invoice.totalAmount)} руб.`, x + 12, y + 22, {
+        width: width - 24,
         align: "right"
     });
-    doc.fontSize(9).fillColor(COLORS.muted).text(
-        "Стоимость зафиксирована на момент оформления заявки.",
-        x + 14,
-        y + 56,
-        { width: width - 28, align: "right" }
-    );
 
-    doc.y = y + 88;
+    doc.y = y + 56;
 }
 
 function drawFooter(doc) {
-    ensureSpace(doc, 70);
+    ensureSpace(doc, 30);
 
     doc.save();
     doc.strokeColor(COLORS.border);
     doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).stroke();
     doc.restore();
 
-    doc.moveDown(0.55);
-    doc.fontSize(9).fillColor(COLORS.muted).text(
-        "Документ сформирован автоматически на основании отправленной заявки и используется для согласования состава поставки, стоимости и условий отгрузки.",
-        { align: "left" }
-    );
-    doc.moveDown(0.2);
-    doc.text(
-        "Окончательные условия поставки подтверждаются менеджером ООО «Заря» после обработки заявки.",
-        { align: "left" }
+    doc.moveDown(0.25);
+    doc.fontSize(7.5).fillColor(COLORS.muted).text(
+        "Документ сформирован автоматически и используется для согласования состава поставки и условий отгрузки. Окончательные условия подтверждаются менеджером ООО «Заря».",
+        { align: "left", lineGap: 1 }
     );
 }
 
@@ -340,7 +347,7 @@ function generateInvoicePdf(invoice) {
     }
 
     return new Promise((resolve, reject) => {
-        const doc = new PDFDocument({ size: "A4", margin: 42 });
+        const doc = new PDFDocument({ size: "A4", margin: 28 });
         const chunks = [];
 
         doc.on("data", (chunk) => chunks.push(chunk));
@@ -352,31 +359,37 @@ function generateInvoicePdf(invoice) {
 
             drawHeader(doc, invoice);
 
-            drawSectionBlock(doc, "Поставщик", [
-                { label: "Организация", value: "ООО «Заря»" },
-                { label: "Электронная почта", value: env.orderNotificationEmail || env.smtpFrom || "Не указана" },
-                { label: "Основание", value: `Заявка ${invoice.requestNumber} от ${formatDateTime(invoice.createdAt)}` }
-            ]);
+            drawInfoCardRow(doc, {
+                title: "Поставщик",
+                rows: [
+                    { label: "Организация", value: "ООО «Заря»" },
+                    { label: "E-mail", value: env.orderNotificationEmail || env.smtpFrom || "Не указан" },
+                    { label: "Основание", value: `Заявка ${invoice.requestNumber} от ${formatDateTime(invoice.createdAt)}` }
+                ]
+            }, {
+                title: "Покупатель",
+                rows: [
+                    { label: "Предприятие", value: invoice.partner.companyName },
+                    { label: "ИНН / ОГРН", value: `${compactText(invoice.partner.inn)} / ${compactText(invoice.partner.ogrn)}` },
+                    { label: "Адрес", value: invoice.partner.legalAddress }
+                ]
+            });
 
-            drawSectionBlock(doc, "Покупатель", [
-                { label: "Предприятие", value: invoice.partner.companyName },
-                { label: "ИНН", value: invoice.partner.inn },
-                { label: "ОГРН", value: invoice.partner.ogrn },
-                { label: "Юридический адрес", value: invoice.partner.legalAddress }
-            ]);
-
-            drawSectionBlock(doc, "Контактное лицо", [
-                { label: "ФИО", value: invoice.contact.fullName },
-                { label: "Должность", value: invoice.contact.jobTitle },
-                { label: "Телефон", value: invoice.contact.phone },
-                { label: "E-mail", value: invoice.contact.email }
-            ]);
-
-            drawSectionBlock(doc, "Условия отгрузки", [
-                { label: "Способ доставки", value: deliveryTypeLabels[invoice.delivery.deliveryType] || "Не указан" },
-                { label: "Адрес доставки", value: invoice.delivery.deliveryAddress || "Не указан" },
-                { label: "Комментарий", value: invoice.delivery.deliveryComment || "Не указан" }
-            ]);
+            drawInfoCardRow(doc, {
+                title: "Контактное лицо",
+                rows: [
+                    { label: "ФИО", value: invoice.contact.fullName },
+                    { label: "Должность", value: invoice.contact.jobTitle },
+                    { label: "Контакты", value: `${compactText(invoice.contact.phone)}; ${compactText(invoice.contact.email)}` }
+                ]
+            }, {
+                title: "Условия отгрузки",
+                rows: [
+                    { label: "Способ", value: deliveryTypeLabels[invoice.delivery.deliveryType] || "Не указан" },
+                    { label: "Адрес", value: invoice.delivery.deliveryAddress || "Не указан" },
+                    { label: "Комментарий", value: invoice.delivery.deliveryComment || "Не указан" }
+                ]
+            });
 
             drawItemsTable(doc, invoice);
             drawSummary(doc, invoice);

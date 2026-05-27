@@ -9,7 +9,7 @@ function getEmailStatusSummary() {
     if (env.resendConfigured) {
         return {
             configured: true,
-            message: `Resend testing mode is configured. Invoices will be sent via onboarding@resend.dev only to ${env.resendTestToEmail}.`
+            message: `Resend настроен в тестовом режиме. Накладные будут отправляться через onboarding@resend.dev на ${env.resendTestToEmail}.`
         };
     }
 
@@ -140,59 +140,12 @@ function wasAccepted(info, recipient) {
     return info.accepted.some((accepted) => String(accepted).trim().toLowerCase() === recipient.trim().toLowerCase());
 }
 
-function buildResendTestingSubject(requestNumber) {
-    return `[TEST] Накладная по заявке ${requestNumber}`;
-}
-
-function buildResendTestingTextBody({ contactEmail, requestNumber, intendedRecipients }) {
-    const formattedRecipients = intendedRecipients.length ? intendedRecipients.join(", ") : "не определено";
-
-    return [
-        "Тестовый режим Resend (resend.dev)",
-        "",
-        `Заявка ${requestNumber} обработана, накладная приложена к письму.`,
-        `Тестовый адрес получения: ${env.resendTestToEmail}.`,
-        `Исходный e-mail контактного лица: ${contactEmail || "не указан"}.`,
-        `Кому письмо должно было уйти в боевом режиме: ${formattedRecipients}.`,
-        "",
-        "Это письмо отправлено через тестовый домен Resend и не уходит реальным получателям.",
-        ""
-    ].join("\n");
-}
-
-function buildResendTestingHtmlBody({ contactEmail, requestNumber, intendedRecipients }) {
-    const recipientsHtml = intendedRecipients.length
-        ? `<ul style="margin:8px 0 0 18px; padding:0;">${intendedRecipients.map((email) => `<li>${escapeHtml(email)}</li>`).join("")}</ul>`
-        : '<div style="margin-top:8px;">Не определено</div>';
-
-    return `
-        <div style="margin:0; padding:32px 16px; background:#f3efe4; font-family:Arial, Helvetica, sans-serif; color:#202020;">
-            <div style="max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e3dfd4; border-radius:18px; overflow:hidden; box-shadow:0 18px 44px rgba(32,32,32,.08);">
-                <div style="padding:22px 28px; background:#5b744f; color:#fff7e6;">
-                    <div style="font-size:12px; letter-spacing:.12em; text-transform:uppercase; opacity:.82;">Resend Test Mode</div>
-                    <div style="margin-top:8px; font-size:28px; line-height:1.2; font-weight:700;">Накладная по заявке ${escapeHtml(requestNumber)}</div>
-                </div>
-                <div style="padding:28px;">
-                    <p style="margin:0 0 14px; font-size:16px; line-height:1.65;">PDF накладной приложен к письму.</p>
-                    <p style="margin:0 0 14px; font-size:16px; line-height:1.65;">Это тестовая отправка через <strong>onboarding@resend.dev</strong>, поэтому письмо пришло только на тестовый адрес <strong>${escapeHtml(env.resendTestToEmail)}</strong>.</p>
-                    <div style="margin-top:22px; padding:18px 20px; border-radius:14px; background:#fbfaf7; border:1px solid #ece6da;">
-                        <div style="font-size:13px; color:#736a58; margin-bottom:6px;">Исходный e-mail контактного лица</div>
-                        <div style="font-size:18px; font-weight:600; color:#202020;">${escapeHtml(contactEmail || "не указан")}</div>
-                    </div>
-                    <div style="margin-top:18px; padding:18px 20px; border-radius:14px; background:#fbfaf7; border:1px solid #ece6da;">
-                        <div style="font-size:13px; color:#736a58; margin-bottom:6px;">Кому письмо должно было уйти в боевом режиме</div>
-                        ${recipientsHtml}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
 async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, invoiceBuffer, invoiceFileName }) {
     const recipients = buildRecipientTargets(contactEmail);
 
     if (env.resendConfigured) {
+        const primaryRecipientKind = recipients.some((recipient) => recipient.kind === "contact") ? "contact" : "company";
+
         try {
             const response = await fetch(RESEND_API_URL, {
                 method: "POST",
@@ -205,17 +158,9 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
                     from: RESEND_FROM,
                     to: [env.resendTestToEmail],
                     ...(env.resendReplyTo ? { reply_to: env.resendReplyTo } : {}),
-                    subject: buildResendTestingSubject(requestNumber),
-                    text: buildResendTestingTextBody({
-                        contactEmail,
-                        requestNumber,
-                        intendedRecipients: recipients.map((recipient) => recipient.email)
-                    }),
-                    html: buildResendTestingHtmlBody({
-                        contactEmail,
-                        requestNumber,
-                        intendedRecipients: recipients.map((recipient) => recipient.email)
-                    }),
+                    subject: buildSubject(requestNumber, primaryRecipientKind),
+                    text: buildTextBody({ requestNumber, recipientKind: primaryRecipientKind }),
+                    html: buildHtmlBody({ requestNumber, recipientKind: primaryRecipientKind }),
                     attachments: [
                         {
                             filename: invoiceFileName,
@@ -237,7 +182,7 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
 
             return {
                 status: "sent",
-                message: `Накладная отправлена в тестовый ящик ${env.resendTestToEmail} через Resend.`,
+                message: `Накладная отправлена через Resend на ${env.resendTestToEmail}.`,
                 recipients: [env.resendTestToEmail]
             };
         }
@@ -245,7 +190,7 @@ async function sendPurchaseRequestInvoiceEmail({ contactEmail, requestNumber, in
             console.error(`Invoice email failed for Resend test recipient ${env.resendTestToEmail}:`, error.message);
             return {
                 status: "failed",
-                message: "Заявка сохранена, но тестовую отправку через Resend выполнить не удалось.",
+                message: "Заявка сохранена, но отправку через Resend выполнить не удалось.",
                 recipients: [],
                 failedRecipients: [env.resendTestToEmail]
             };
